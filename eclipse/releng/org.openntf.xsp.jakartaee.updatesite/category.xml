@@ -17,22 +17,13 @@
 
 -->
 <site>
+	<feature id="org.openntf.xsp.jakartaee.spec.feature">
+		<category name="XPages Jakarta EE"/>
+	</feature>
+	<feature id="org.openntf.xsp.jakartaee.impl.feature">
+		<category name="XPages Jakarta EE"/>
+	</feature>
 	<feature id="org.openntf.xsp.jakartaee.feature">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<feature id="org.openntf.xsp.cdi.feature">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<feature id="org.openntf.xsp.el.feature">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<feature id="org.openntf.xsp.jaxrs.feature">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<feature id="org.openntf.xsp.beanvalidation.feature">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<feature id="org.openntf.xsp.jsonapi.feature">
 		<category name="XPages Jakarta EE"/>
 	</feature>
 	<!--

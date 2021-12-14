@@ -8,9 +8,9 @@ Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.12.0",
  com.ibm.xsp.core;bundle-version="9.0.1",
- jakarta.el-api;bundle-version="4.0.0",
- org.glassfish.jakarta.el;bundle-version="4.0.1",
- org.openntf.xsp.jakartaee.commons;bundle-version="1.0.0";visibility:=reexport,
+ jakarta.el-api;bundle-version="4.0.0";visibility:=reexport,
+ org.glassfish.jakarta.el;bundle-version="4.0.0",
+ org.openntf.xsp.jakartaee.commons;bundle-version="1.0.0",
  com.ibm.xsp.domino;bundle-version="9.0.1",
  com.ibm.commons,
  com.ibm.jscript,
@@ -18,3 +18,4 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.12.0",
 Import-Package: lotus.domino
 Export-Package: org.openntf.xsp.el,
  org.openntf.xsp.el.ext
+Fragment-Host: org.openntf.xsp.jakartaee

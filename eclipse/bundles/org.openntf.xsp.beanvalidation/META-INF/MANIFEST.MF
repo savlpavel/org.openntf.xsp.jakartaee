@@ -14,6 +14,6 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="3.12.0",
  com.ibm.xsp.extsn;bundle-version="9.0.1",
  jakarta.validation.jakarta.validation-api;bundle-version="3.0.0";visibility:=reexport,
  org.hibernate.validator;bundle-version="7.0.1";visibility:=reexport,
- org.openntf.xsp.el;bundle-version="2.0.0";visibility:=reexport,
  com.ibm.xsp.designer;bundle-version="9.0.1"
 Export-Package: org.openntf.xsp.beanvalidation
+Fragment-Host: org.openntf.xsp.jakartaee

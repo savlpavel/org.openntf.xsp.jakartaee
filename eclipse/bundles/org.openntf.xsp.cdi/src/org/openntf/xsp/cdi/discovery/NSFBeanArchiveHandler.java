@@ -22,8 +22,8 @@ import jakarta.annotation.Priority;
 import org.jboss.weld.bootstrap.spi.BeansXml;
 import org.jboss.weld.environment.deployment.discovery.BeanArchiveBuilder;
 import org.jboss.weld.environment.deployment.discovery.BeanArchiveHandler;
-import org.openntf.xsp.cdi.CDILibrary;
 import org.openntf.xsp.cdi.util.ContainerUtil;
+import org.openntf.xsp.jakartaee.JakartaConstants;
 import org.openntf.xsp.jakartaee.LibraryUtil;
 import org.openntf.xsp.jakartaee.ModuleUtil;
 
@@ -41,7 +41,7 @@ public class NSFBeanArchiveHandler implements BeanArchiveHandler {
 		if(context != null) {
 			NSFComponentModule module = context.getModule();
 			try {
-				if(LibraryUtil.usesLibrary(CDILibrary.LIBRARY_ID, module)) {
+				if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, module)) {
 					// If it uses a CDI bundle ref, skip processing
 					String bundleId = ContainerUtil.getApplicationCDIBundle(context.getNotesDatabase());
 					if(StringUtil.isNotEmpty(bundleId)) {

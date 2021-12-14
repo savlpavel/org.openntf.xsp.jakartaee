@@ -25,8 +25,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.EvaluationException;
 import javax.faces.el.VariableResolver;
 
-import org.openntf.xsp.cdi.CDILibrary;
 import org.openntf.xsp.cdi.util.ContainerUtil;
+import org.openntf.xsp.jakartaee.JakartaConstants;
 import org.openntf.xsp.jakartaee.LibraryUtil;
 
 import com.ibm.xsp.application.ApplicationEx;
@@ -55,7 +55,7 @@ public class CDIResolver extends VariableResolver {
 		
 		// Finally, ask CDI for a named bean
 		ApplicationEx app = ApplicationEx.getInstance(facesContext);
-		if(LibraryUtil.usesLibrary(CDILibrary.LIBRARY_ID, app)) {
+		if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, app)) {
 			CDI<Object> container = CDI.current();
 			if(container == null) {
 				container = ContainerUtil.getContainer(app);

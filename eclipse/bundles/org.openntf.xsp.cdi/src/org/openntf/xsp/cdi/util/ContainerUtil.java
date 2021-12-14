@@ -37,15 +37,16 @@ import org.jboss.weld.manager.BeanManagerImpl;
 import org.jboss.weld.resources.ClassLoaderResourceLoader;
 import org.jboss.weld.resources.spi.ResourceLoader;
 import org.jboss.weld.util.ForwardingBeanManager;
-import org.openntf.xsp.cdi.CDILibrary;
 import org.openntf.xsp.cdi.context.CDIScopesExtension;
 import org.openntf.xsp.cdi.discovery.OSGiServletBeanArchiveHandler;
 import org.openntf.xsp.cdi.discovery.WeldBeanClassContributor;
+import org.openntf.xsp.jakartaee.JakartaConstants;
 import org.openntf.xsp.jakartaee.LibraryUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.wiring.BundleWiring;
 
+import com.ibm.commons.util.PathUtil;
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.domino.napi.NotesAPIException;
 import com.ibm.designer.domino.napi.NotesDatabase;
@@ -78,14 +79,14 @@ public enum ContainerUtil {
 	 * {@link #getContainer(Bundle)}.
 	 * @since 1.1.0
 	 */
-	public static final String PROP_CDIBUNDLE = CDILibrary.LIBRARY_ID + ".cdibundle"; //$NON-NLS-1$
+	public static final String PROP_CDIBUNDLE = JakartaConstants.LIBRARY_ID + ".cdibundle"; //$NON-NLS-1$
 	/**
 	 * The xsp.properties key used to determine an OSGi bundle to use as a baseline for CDI
 	 * beans for an NSF. When this is set, CDI will pull all classes and resources from the named
 	 * OSGi bundle, but will use a separate CDI container for each NSF.
 	 * @since 1.2.0
 	 */
-	public static final String PROP_CDIBUNDLEBASE = CDILibrary.LIBRARY_ID + ".cdibundlebase"; //$NON-NLS-1$
+	public static final String PROP_CDIBUNDLEBASE = JakartaConstants.LIBRARY_ID + ".cdibundlebase"; //$NON-NLS-1$
 
 	/**
 	 * Gets or created a {@link WeldContainer} instance for the provided Application.
@@ -95,7 +96,7 @@ public enum ContainerUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static synchronized CDI<Object> getContainer(ApplicationEx application) {
-		if(LibraryUtil.usesLibrary(CDILibrary.LIBRARY_ID, application)) {
+		if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, application)) {
 			String bundleId = getApplicationCDIBundle(application);
 			if(StringUtil.isNotEmpty(bundleId)) {
 				Bundle bundle = Platform.getBundle(bundleId);
@@ -117,6 +118,7 @@ public enum ContainerUtil {
 				Weld weld = constructWeld(id)
 					.addServices(new NSFProxyServices())
 					.property(Weld.SCAN_CLASSPATH_ENTRIES_SYSTEM_PROPERTY, true);
+				
 
 				String baseBundleId = getApplicationCDIBundleBase(application);
 				if(StringUtil.isNotEmpty(baseBundleId)) {
@@ -201,7 +203,7 @@ public enum ContainerUtil {
 	 * @throws IOException if there is a problem parsing the database configuration
 	 */
 	public static CDI<Object> getContainer(NotesDatabase database) throws NotesAPIException, IOException {
-		if(LibraryUtil.usesLibrary(CDILibrary.LIBRARY_ID, database)) {
+		if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, database)) {
 			String bundleId = getApplicationCDIBundle(database);
 			if(StringUtil.isNotEmpty(bundleId)) {
 				Bundle bundle = Platform.getBundle(bundleId);
@@ -361,6 +363,12 @@ public enum ContainerUtil {
 	// * Internal utilities
 	// *******************************************************************************
 
+	/**
+	 * This {@link ResourceLoader} implementation searches within the provided
+	 * {@link ComponentModule} for resources, as well as this class's ClassLoader.
+	 * 
+	 * @since 2.0.0
+	 */
 	private static class ModuleContextResourceLoader extends ClassLoaderResourceLoader {
 		private final ComponentModule module;
 
@@ -379,6 +387,34 @@ public enum ContainerUtil {
 				}
 			} catch (MalformedURLException e) {
 				// Ignore
+			}
+			// Always look in this bundle
+			URL bundleRes = getClass().getResource(PathUtil.concat("/", name, '/')); //$NON-NLS-1$
+			if(bundleRes != null) {
+				result.add(bundleRes);
+			}
+			
+			return result;
+		}
+		
+		@Override
+		public URL getResource(String name) {
+			URL result = super.getResource(name);
+			if(result == null) {
+				result = getClass().getResource(PathUtil.concat("/", name, '/')); //$NON-NLS-1$
+			}
+			return result;
+		}
+		
+		@Override
+		public Class<?> classForName(String name) {
+			Class<?> result = super.classForName(name);
+			if(result != null) {
+				try {
+					result = getClass().getClassLoader().loadClass(name);
+				} catch (ClassNotFoundException e) {
+					// Ignore
+				}
 			}
 			return result;
 		}

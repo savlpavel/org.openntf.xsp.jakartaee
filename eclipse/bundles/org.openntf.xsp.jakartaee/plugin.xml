@@ -16,21 +16,10 @@
     limitations under the License.
 
 -->
-<site>
-	<feature id="org.openntf.xsp.jakartaee.spec.feature.source">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<feature id="org.openntf.xsp.jakartaee.impl.feature.source">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<feature id="org.openntf.xsp.jakartaee.feature.source">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	<!--
-	<feature id="org.openntf.xsp.jsp.feature.source">
-		<category name="XPages Jakarta EE"/>
-	</feature>
-	-->
-   
-   <category-def name="XPages Jakarta EE" label="XPages Jakarta EE"/>
-</site>
+<?eclipse version="3.4"?>
+<plugin>
+	<!-- The Xsp Library -->
+	<extension point="com.ibm.commons.Extension">
+		<service type="com.ibm.xsp.Library" class="org.openntf.xsp.jakartaee.library.JakartaLibrary" />
+	</extension>
+</plugin>

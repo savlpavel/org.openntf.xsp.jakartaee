@@ -18,8 +18,17 @@
 -->
 <?eclipse version="3.4"?>
 <plugin>
-	<!-- The ApplicationListener to install the EL3 binding factory -->
+	<!-- The Xsp Library -->
 	<extension point="com.ibm.commons.Extension">
-		<service type="com.ibm.xsp.core.events.ApplicationListener" class="org.openntf.xsp.el.ELApplicationListener" />
+		<service type="org.openntf.xsp.jakartaee.JakartaLibraryContributor" class="org.openntf.xsp.cdi.CDILibrary" />
+	</extension>
+	
+	<!-- The ApplicationListener to manage the CDI context -->
+	<extension point="com.ibm.commons.Extension">
+		<service type="com.ibm.xsp.core.events.ApplicationListener" class="org.openntf.xsp.cdi.impl.WeldApplicationListener" />
+	</extension>
+	
+	<extension point="com.ibm.commons.Extension">
+		<service type="org.openntf.xsp.cdi.ext.CDIContainerUtility" class="org.openntf.xsp.cdi.impl.ContainerUtilProvider" />
 	</extension>
 </plugin>

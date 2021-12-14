@@ -21,7 +21,7 @@ import jakarta.enterprise.context.RequestScoped;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.openntf.xsp.cdi.ext.CDIConstants;
+import org.openntf.xsp.jakartaee.JakartaConstants;
 
 /**
  * @author Jesse Gallagher
@@ -55,6 +55,6 @@ public class RequestScopeContext extends AbstractProxyingContext {
 	
 	@Override
 	public boolean isActive() {
-		return !"true".equals(getHttpServletRequest().getAttribute(CDIConstants.CDI_JAXRS_REQUEST)); //$NON-NLS-1$
+		return !"true".equals(getHttpServletRequest().getAttribute(JakartaConstants.CDI_JAXRS_REQUEST)); //$NON-NLS-1$
 	}
 }

@@ -15,6 +15,7 @@
  */
 package org.openntf.xsp.el;
 
+import org.openntf.xsp.jakartaee.JakartaConstants;
 import org.openntf.xsp.jakartaee.LibraryUtil;
 
 import com.ibm.xsp.application.ApplicationEx;
@@ -22,14 +23,15 @@ import com.ibm.xsp.application.events.ApplicationListener2;
 import com.ibm.xsp.factory.FactoryLookup;
 
 public class ELApplicationListener implements ApplicationListener2 {
+	public static final String PROP_PREFIX = "org.openntf.xsp.el.prefix"; //$NON-NLS-1$
 
 	@Override
 	public void applicationCreated(ApplicationEx application) {
-		if(LibraryUtil.usesLibrary(ELLibrary.LIBRARY_ID, application)) {
+		if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, application)) {
 			@SuppressWarnings("deprecation")
 			FactoryLookup facts = application.getFactoryLookup();
 			
-			String prefix = application.getProperty(ELLibrary.PROP_PREFIX, ELBindingFactory.PREFIX);
+			String prefix = application.getProperty(PROP_PREFIX, ELBindingFactory.PREFIX);
 			facts.setFactory(prefix, new ELBindingFactory(prefix));
 			
 			// Create a binding factory for default bindings

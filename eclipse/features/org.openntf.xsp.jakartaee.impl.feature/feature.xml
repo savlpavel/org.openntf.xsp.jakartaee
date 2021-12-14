@@ -17,8 +17,8 @@
 
 -->
 <feature
-      id="org.openntf.xsp.jakartaee.feature"
-      label="XPages Jakarta EE Platform Feature"
+      id="org.openntf.xsp.jakartaee.impl.feature"
+      label="XPages Jakarta EE Implementations Feature"
       version="2.0.0.qualifier">
 
    <description url="https://github.com/OpenNTF/org.openntf.xsp.jakartaee">
@@ -232,25 +232,174 @@
    See the License for the specific language governing permissions and
    limitations under the License.
    </license>
-   
+
    <requires>
       <import feature="org.openntf.xsp.jakartaee.spec.feature"/>
-      <import feature="org.openntf.xsp.jakartaee.impl.feature"/>
    </requires>
 
-	<plugin id="org.openntf.xsp.jakartaee.commons" version="0.0.0"/>
-	<plugin id="org.openntf.xsp.jakartaee" version="0.0.0"/>
-	
-	<plugin id="org.openntf.xsp.beanvalidation" version="0.0.0" fragment="true"/>
-	
-	<plugin id="org.openntf.xsp.cdi" version="0.0.0" fragment="true"/>
-	<plugin id="org.openntf.xsp.cdi.provider" version="0.0.0"/>
-	
-	<plugin id="org.openntf.xsp.el" version="0.0.0" fragment="true"/>
-	
-	<plugin id="org.openntf.xsp.jaxrs" version="0.0.0" fragment="true"/>
-	<plugin id="org.openntf.xsp.jaxrs.factory" version="0.0.0" fragment="true"/>
-	
-	<plugin id="org.openntf.xsp.jsonapi" version="0.0.0" fragment="true"/>
+   <plugin
+         id="org.openntf.com.sun.xml.bind.jaxb-core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.openntf.com.sun.xml.bind.jaxb-impl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="org.openntf.xsp.jakartamail.impl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
+   <plugin
+         id="angus-activation"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.glassfish.jakarta.el"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.jboss-classfilewriter"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.jboss.weld.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.jboss.weld.spi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.jboss.weld.core-impl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.jboss.weld.environment.weld-environment-common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.jboss.weld.se.weld-se-core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.jboss.weld.probe.weld-probe-core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.glassfish.jakarta.json"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.eclipse.yasson"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="com.fasterxml.classmate"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.hibernate.validator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.resteasy.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.jboss.resteasy.core-spi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.resteasy.cdi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.resteasy.multipart-provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.resteasy.jaxb-provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.resteasy.validator-provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.reactivestreams.reactive-streams"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.resteasy.json-p-provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.resteasy.json-binding-provider"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.jboss.logging.jboss-logging"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.org.glassfish.hk2.osgi-resource-locator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

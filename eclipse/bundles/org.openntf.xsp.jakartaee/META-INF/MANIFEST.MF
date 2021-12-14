@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: XPages Jakarta EE Library
+Bundle-SymbolicName: org.openntf.xsp.jakartaee;singleton:=true
+Automatic-Module-Name: org.openntf.xsp.jakartaee
+Bundle-Version: 2.0.0.qualifier
+Bundle-Vendor: OpenNTF
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: com.ibm.commons;bundle-version="9.0.1",
+ com.ibm.xsp.core;bundle-version="9.0.1",
+ jakarta.activation-api;bundle-version="2.0.0";visibility:=reexport,
+ org.openntf.xsp.jakartamail.api;bundle-version="2.0.0";visibility:=reexport,
+ jakarta.xml.bind-api;bundle-version="3.0.0";visibility:=reexport,
+ org.openntf.xsp.jakartaee.commons
+Import-Package: org.osgi.framework;version="1.8.0"
+Eclipse-ExtensibleAPI: true

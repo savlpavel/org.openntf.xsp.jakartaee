@@ -18,8 +18,8 @@ package org.openntf.xsp.cdi.impl;
 import jakarta.enterprise.inject.spi.CDI;
 
 import org.jboss.weld.environment.se.WeldContainer;
-import org.openntf.xsp.cdi.CDILibrary;
 import org.openntf.xsp.cdi.util.ContainerUtil;
+import org.openntf.xsp.jakartaee.JakartaConstants;
 import org.openntf.xsp.jakartaee.LibraryUtil;
 
 import com.ibm.commons.util.StringUtil;
@@ -39,7 +39,7 @@ public class WeldApplicationListener implements ApplicationListener2 {
 
 	@Override
 	public void applicationCreated(ApplicationEx application) {
-		if(LibraryUtil.usesLibrary(CDILibrary.LIBRARY_ID, application)) {
+		if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, application)) {
 			// Ensure that the container exists
 			ContainerUtil.getContainer(application);
 		}
@@ -47,7 +47,7 @@ public class WeldApplicationListener implements ApplicationListener2 {
 
 	@Override
 	public void applicationDestroyed(ApplicationEx application) {
-		if(LibraryUtil.usesLibrary(CDILibrary.LIBRARY_ID, application)) {
+		if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, application)) {
 			String bundleId = ContainerUtil.getApplicationCDIBundle(application);
 			if(StringUtil.isNotEmpty(bundleId)) {
 				// Leave it alive
@@ -67,7 +67,7 @@ public class WeldApplicationListener implements ApplicationListener2 {
 
 	@Override
 	public void applicationRefreshed(ApplicationEx application) {
-		if(LibraryUtil.usesLibrary(CDILibrary.LIBRARY_ID, application)) {
+		if(LibraryUtil.usesLibrary(JakartaConstants.LIBRARY_ID, application)) {
 			applicationDestroyed(application);
 			applicationCreated(application);
 		}

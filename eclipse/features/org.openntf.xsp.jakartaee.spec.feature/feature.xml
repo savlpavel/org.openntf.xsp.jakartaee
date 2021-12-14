@@ -17,8 +17,8 @@
 
 -->
 <feature
-      id="org.openntf.xsp.jakartaee.feature"
-      label="XPages Jakarta EE Platform Feature"
+      id="org.openntf.xsp.jakartaee.spec.feature"
+      label="XPages Jakarta EE Specifications Feature"
       version="2.0.0.qualifier">
 
    <description url="https://github.com/OpenNTF/org.openntf.xsp.jakartaee">
@@ -232,25 +232,77 @@
    See the License for the specific language governing permissions and
    limitations under the License.
    </license>
-   
-   <requires>
-      <import feature="org.openntf.xsp.jakartaee.spec.feature"/>
-      <import feature="org.openntf.xsp.jakartaee.impl.feature"/>
-   </requires>
 
-	<plugin id="org.openntf.xsp.jakartaee.commons" version="0.0.0"/>
-	<plugin id="org.openntf.xsp.jakartaee" version="0.0.0"/>
-	
-	<plugin id="org.openntf.xsp.beanvalidation" version="0.0.0" fragment="true"/>
-	
-	<plugin id="org.openntf.xsp.cdi" version="0.0.0" fragment="true"/>
-	<plugin id="org.openntf.xsp.cdi.provider" version="0.0.0"/>
-	
-	<plugin id="org.openntf.xsp.el" version="0.0.0" fragment="true"/>
-	
-	<plugin id="org.openntf.xsp.jaxrs" version="0.0.0" fragment="true"/>
-	<plugin id="org.openntf.xsp.jaxrs.factory" version="0.0.0" fragment="true"/>
-	
-	<plugin id="org.openntf.xsp.jsonapi" version="0.0.0" fragment="true"/>
+   <plugin
+         id="jakarta.annotation-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.xml.bind-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.xsp.jakartamail.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.activation-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.el-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.interceptor-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.inject.jakarta.inject-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openntf.xsp.cdi.api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.servlet-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.json.bind-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.validation.jakarta.validation-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="jakarta.ws.rs-api"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

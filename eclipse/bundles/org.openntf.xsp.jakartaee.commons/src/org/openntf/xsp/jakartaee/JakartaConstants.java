@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.openntf.xsp.cdi;
+package org.openntf.xsp.jakartaee;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.openntf.xsp.jakartaee.JakartaLibraryContributor;
-
-public class CDILibrary implements JakartaLibraryContributor {
+/**
+ * Common Jakarta-related constants for multiple modules.
+ * 
+ * @author Jesse Gallagher
+ * @since 2.0.0
+ */
+public interface JakartaConstants {
+	String CDI_JAXRS_REQUEST = "org.openntf.xsp.jaxrs.isJaxRsRequest"; //$NON-NLS-1$
 	
-	@Override
-	public List<String> getFacesConfigFiles() {
-		return Arrays.asList("org/openntf/xsp/cdi/jsf.xml"); //$NON-NLS-1$
-	}
-
+	String LIBRARY_ID = "org.openntf.xsp.jakartaee"; //$NON-NLS-1$
 }

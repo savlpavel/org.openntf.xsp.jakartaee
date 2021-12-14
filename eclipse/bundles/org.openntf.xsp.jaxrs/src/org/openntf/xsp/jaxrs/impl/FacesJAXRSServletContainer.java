@@ -16,6 +16,8 @@
 package org.openntf.xsp.jaxrs.impl;
 
 import java.io.IOException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 
 import javax.faces.FacesException;
@@ -30,7 +32,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher;
-import org.openntf.xsp.cdi.ext.CDIConstants;
+import org.openntf.xsp.jakartaee.JakartaConstants;
 import org.openntf.xsp.jakartaee.servlet.NewHttpServletRequestWrapper;
 import org.openntf.xsp.jakartaee.servlet.NewHttpServletResponseWrapper;
 import org.openntf.xsp.jakartaee.servlet.NewServletContextWrapper;
@@ -74,7 +76,7 @@ public class FacesJAXRSServletContainer extends HttpServletDispatcher {
 	
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		request.setAttribute(CDIConstants.CDI_JAXRS_REQUEST, "true"); //$NON-NLS-1$
+		request.setAttribute(JakartaConstants.CDI_JAXRS_REQUEST, "true"); //$NON-NLS-1$
 		
 		NotesContext nc = NotesContext.getCurrentUnchecked();
     	String javaClassValue = "plugin.Activator"; //$NON-NLS-1$
@@ -97,7 +99,19 @@ public class FacesJAXRSServletContainer extends HttpServletDispatcher {
 	    	}
 			if (!initialized){ // initialization has do be done after NotesContext is initialized with session to support SessionAsSigner operations
 				super.init();
-				super.init(config);
+				ClassLoader cl = AccessController.doPrivileged((PrivilegedAction<ClassLoader>)() -> Thread.currentThread().getContextClassLoader());
+				try {
+					AccessController.doPrivileged((PrivilegedAction<Void>)() -> {
+						Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
+						return null;
+					});
+					super.init(config);
+				} finally {
+					AccessController.doPrivileged((PrivilegedAction<Void>)() -> {
+						Thread.currentThread().setContextClassLoader(cl);
+						return null;
+					});
+				}
 				
 				initialized = true;
 			}
