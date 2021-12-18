@@ -39,6 +39,7 @@ Import-Package: jakarta.activation;version="2.0.0",
  jakarta.servlet.http;version="5.0.0",
  lotus.domino,
  org.jboss.resteasy.cdi,
- org.jboss.resteasy.spi
+ org.jboss.resteasy.spi,
+ org.openntf.xsp.cdi.util
 Export-Package: org.openntf.xsp.jaxrs
 Fragment-Host: org.openntf.xsp.jakartaee
