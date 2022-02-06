@@ -23,6 +23,7 @@ import org.openntf.xsp.cdi.discovery.WeldBeanClassContributor;
 import org.openntf.xsp.jakartaee.LibraryUtil;
 import org.openntf.xsp.mvc.MvcLibrary;
 import org.openntf.xsp.mvc.impl.DelegatingExceptionViewEngine;
+import org.openntf.xsp.mvc.impl.XspViewEngine;
 
 import jakarta.enterprise.inject.spi.Extension;
 
@@ -33,7 +34,9 @@ public class MvcBeanClassContributor implements WeldBeanClassContributor {
 		if(LibraryUtil.isLibraryActive(MvcLibrary.LIBRARY_ID)) {
 			return Arrays.asList(
 				DominoHttpContextBean.class,
-				DelegatingExceptionViewEngine.class
+				DelegatingExceptionViewEngine.class,
+				
+				XspViewEngine.class
 			);
 		} else {
 			return null;

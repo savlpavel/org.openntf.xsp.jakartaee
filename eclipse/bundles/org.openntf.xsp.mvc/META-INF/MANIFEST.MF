@@ -6,11 +6,15 @@ Automatic-Module-Name: org.openntf.xsp.mvc
 Bundle-Version: 2.3.0.qualifier
 Bundle-Vendor: OpenNTF
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Import-Package: com.ibm.xsp.application,
+Import-Package: com.ibm.designer.runtime.domino.adapter,
+ com.ibm.domino.xsp.module.nsf,
+ com.ibm.xsp.application,
  com.ibm.xsp.library,
+ javax.servlet.http;version="2.5.0",
  org.eclipse.core.runtime,
  org.osgi.framework
-Require-Bundle: jakarta.servlet-api;bundle-version="5.0.0";visibility:=reexport,
+Require-Bundle: com.ibm.xsp.designer;bundle-version="9.0.1",
+ jakarta.servlet-api;bundle-version="5.0.0";visibility:=reexport,
  jakarta.ws.rs-api;bundle-version="3.0.0";visibility:=reexport,
  org.openntf.xsp.jaxrs;bundle-version="2.0.0",
  org.openntf.xsp.cdi.api;visibility:=reexport,
