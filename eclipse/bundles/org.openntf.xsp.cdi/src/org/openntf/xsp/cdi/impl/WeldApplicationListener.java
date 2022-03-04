@@ -20,7 +20,7 @@ import jakarta.enterprise.inject.spi.CDI;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.openntf.xsp.cdi.CDILibrary;
 import org.openntf.xsp.cdi.util.ContainerUtil;
-import org.openntf.xsp.jakartaee.LibraryUtil;
+import org.openntf.xsp.jakartaee.util.LibraryUtil;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.xsp.application.ApplicationEx;
@@ -48,7 +48,7 @@ public class WeldApplicationListener implements ApplicationListener2 {
 				return;
 			}
 			
-			CDI<Object> container = ContainerUtil.getContainer(application);
+			CDI<Object> container = ContainerUtil.getContainerUnchecked(application);
 			if(container instanceof WeldContainer) {
 				@SuppressWarnings("resource")
 				WeldContainer c = (WeldContainer)container;

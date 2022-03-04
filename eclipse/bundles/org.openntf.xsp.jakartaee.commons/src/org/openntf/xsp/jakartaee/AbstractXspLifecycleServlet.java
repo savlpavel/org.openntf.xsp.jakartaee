@@ -1,6 +1,22 @@
+/**
+ * Copyright © 2018-2022 Jesse Gallagher
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.openntf.xsp.jakartaee;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -14,8 +30,11 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 
 import org.openntf.xsp.jakartaee.servlet.ServletUtil;
+import org.openntf.xsp.jakartaee.util.LibraryUtil;
+import org.openntf.xsp.jakartaee.util.ModuleUtil;
 
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
+import com.ibm.designer.runtime.domino.adapter.util.XSPErrorPage;
 import com.ibm.domino.xsp.module.nsf.NSFComponentModule;
 import com.ibm.domino.xsp.module.nsf.NotesContext;
 import com.ibm.domino.xsp.module.nsf.RuntimeFileSystem;
@@ -73,6 +92,7 @@ public abstract class AbstractXspLifecycleServlet extends HttpServlet {
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
 		this.config = config;
 		
 		// Look for registered ServletContainerInitializers and emulate the behavior
@@ -84,14 +104,9 @@ public abstract class AbstractXspLifecycleServlet extends HttpServlet {
 			}
 			initializer.onStartup(classes, config.getServletContext());
 		}
-		
-		try {
-			this.facesServlet = (DesignerFacesServlet)module.getServlet("/foo.xsp").getServlet(); //$NON-NLS-1$
-			// This should be functionally a NOP when already initialized
-			this.facesServlet.init(ServletUtil.newToOld(config));
-		} catch (javax.servlet.ServletException e) {
-			throw new ServletException(e);
-		}
+
+		// Kick off init early if needed
+		this.getFacesServlet(config);
 	}
 	
 	@Override
@@ -102,7 +117,7 @@ public abstract class AbstractXspLifecycleServlet extends HttpServlet {
 		FacesContext facesContext = null;
 		try {
 			if (!initialized){ // initialization has do be done after NotesContext is initialized with session to support SessionAsSigner operations
-				super.init(config);
+				doInit(config);
 				
 				initialized = true;
 			}
@@ -115,7 +130,15 @@ public abstract class AbstractXspLifecycleServlet extends HttpServlet {
 		} catch(NoAccessSignal t) {
 			throw t;
 		} catch(Throwable t) {
-			response.sendError(500, "Application failed!"); //$NON-NLS-1$
+			try(PrintWriter w = response.getWriter()) {
+				response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				XSPErrorPage.handleException(w, t, request.getRequestURL().toString(), false);
+			} catch (javax.servlet.ServletException e) {
+				throw new IOException(e);
+			} catch(IllegalStateException e) {
+				// Happens when the writer or output has already been opened
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
 		} finally {
 			if (facesContext != null) {
 				releaseContext(facesContext);
@@ -128,15 +151,41 @@ public abstract class AbstractXspLifecycleServlet extends HttpServlet {
     	return config;
     }
 	
+	/**
+	 * This method is called during the first request into the Servlet, to allow subclasses to
+	 * perform delegate initialization or other tasks.
+	 * 
+	 * <p>This delayed initialization allows delegate init to run at a point when the
+	 * {@code NotesContext} is set up, which is not the case when calling
+	 * {@link #init(ServletConfig}}.</p>
+	 * 
+	 * @param config the active {@link ServletConfig}
+	 * @throws ServletException if initialization encounters a problem
+	 */
+	protected abstract void doInit(ServletConfig config) throws ServletException;
+	
 	protected abstract void doService(HttpServletRequest request, HttpServletResponse response, ApplicationEx application) throws ServletException, IOException;
 
 	// *******************************************************************************
 	// * Internal implementation methods
 	// *******************************************************************************
 	
+	private synchronized FacesServlet getFacesServlet(ServletConfig config) {
+		if(this.facesServlet == null) {
+			try {
+				this.facesServlet = (DesignerFacesServlet)module.getServlet("/foo.xsp").getServlet(); //$NON-NLS-1$
+				// This should be functionally a NOP when already initialized
+				this.facesServlet.init(ServletUtil.newToOld(config));
+			} catch (javax.servlet.ServletException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return this.facesServlet;
+	}
+	
 	private FacesContext getFacesContext(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			return (FacesContext)getFacesContextMethod.invoke(facesServlet, ServletUtil.newToOld(request), ServletUtil.newToOld(response));
+			return (FacesContext)getFacesContextMethod.invoke(getFacesServlet(getServletConfig()), ServletUtil.newToOld(request), ServletUtil.newToOld(response));
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
@@ -154,13 +203,14 @@ public abstract class AbstractXspLifecycleServlet extends HttpServlet {
 	
 	private void initializeSessionAsSigner() {
 		NotesContext nc = NotesContext.getCurrentUnchecked();
-    	String javaClassValue = "plugin.Activator"; //$NON-NLS-1$
-		String str = "WEB-INF/classes/" + javaClassValue.replace('.', '/') + ".class"; //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// This originally worked as below, but is now done reflectively to avoid trouble seen on 12.0.1
+    	//String javaClassValue = "plugin.Activator"; //$NON-NLS-1$
+		//String str = "WEB-INF/classes/" + javaClassValue.replace('.', '/') + ".class"; //$NON-NLS-1$ //$NON-NLS-2$
 		//nc.setSignerSessionRights(str);
-		
 
+		// Use xsp.properties because it should exist in DBs built with NSF ODP Tooling
+		String str = "WEB-INF/xsp.properties"; //$NON-NLS-1$
 		RuntimeFileSystem.NSFFile res = (RuntimeFileSystem.NSFFile)nc.getModule().getRuntimeFileSystem().getResource(str);
 		String signer = res.getUpdatedBy();
 		

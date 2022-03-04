@@ -1,7 +1,8 @@
 # XPages Jakarta EE Support
 
-This project adds partial support for several Java/Jakarta EE technologies to XPages applications. Of the [list of technologies](https://jakarta.ee/specifications/) included in the full Jakarta EE 9 spec, this project currently provides:
+This project adds partial support for several Java/Jakarta EE technologies to XPages applications. Of the [list of technologies](https://jakarta.ee/specifications/) included in the full Jakarta EE spec, this project currently provides:
 
+- Servlet 5.0 (Partial)
 - Expression Language 4.0
 - Contexts and Dependency Injection 3.0
     - Annotations 2.0
@@ -15,6 +16,7 @@ This project adds partial support for several Java/Jakarta EE technologies to XP
 - Mail 2.1
     - Activation 2.1
 - Server Pages 3.0
+- Server Faces 4.0 (snapshot)
 - MVC 2.0
 - NoSQL 1.0 (snapshot)
 
@@ -80,6 +82,22 @@ public class RequestGuy extends AbstractBean {
 }
 ```
 
+The contextual Domino objects - the `Database` and `Session`s - are available to use with `@Inject`. In the case of `Database`, this can be used without any modifiers. In the case of the `Session`s, they are available with `@Named` qualifiers:
+
+```java
+	@Inject
+	@Named("dominoClient")
+	Session session;
+	
+	@Inject
+	@Named("dominoClientAsSigner")
+	Session sessionAsSigner;
+	
+	@Inject
+	@Named("dominoClientAsSignerWithFullAccess")
+	Session sessionAsSignerWithFullAccess;
+```
+
 ### Conversation Scope
 
 This implementation maps CDI `@ConversationScoped` beans to the XPages view scope. This isn't necessarily a [direct analogue](https://stackoverflow.com/questions/7788430/how-does-jsf-2-conversationscope-work), but it's close enough.
@@ -126,6 +144,40 @@ The EL 4 handler is currently stricter about null values than the default handle
 ```
 
 In standard XPages, this will result in an empty output. With the EL 4 resolver, however, this will cause an exception like `ELResolver cannot handle a null base Object with identifier 'beanThatDoesNotExist'`. I'm considering changing this behavior to match the XPages default, but there's also some value in the strictness, especially because the exception is helpful in referencing the object it's trying to resolve against, which could help track down subtle bugs.
+
+## Servlets
+
+This project adds support for specifying Servlets in an NSF using the `@WebServlet` annotation. For example:
+
+```java
+package servlet;
+
+import java.io.IOException;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+@WebServlet(urlPatterns = { "/someservlet", "/someservlet/*", "*.hello" })
+public class ExampleServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setContentType("text/plain");
+		resp.getWriter().println("Hello from ExampleServlet. context=" + req.getContextPath() + ", path=" + req.getServletPath() + ", pathInfo=" + req.getPathInfo());
+		resp.getWriter().flush();
+	}
+}
+```
+
+These Servlets will be available under `/xsp` in the NSF with matching patterns. For example, the above Servlet will match `/foo.nsf/xsp/someservlet`, `/foo.nsf/xsp/someservlet/bar`, and `/foo.nsf/xsp/testme.hello`.
+
+These Servlets participate in the XPages lifecycle and have programmatic access to CDI beans via `CDI.current()`.
+
+Note, however, that other Servlet artifacts such as `@WebFilter` and `@WebListener` are not yet supported.
 
 ## RESTful Web Services
 
@@ -293,7 +345,7 @@ public class JsonTest {
 
 ## JSP and JSTL
 
-The [Jakarta Server Pages](https://jakarta.ee/specifications/pages/3.0/) is the current form of the venerable JSP and provides the ability to write single-execution pages in the NSF with a shared CDI space. The [Jakarta Standard Tag Library](https://jakarta.ee/specifications/tags/2.0/) is the standard set of tags and functions available for looping, formatting, escaping, and other common operations.
+[Jakarta Server Pages](https://jakarta.ee/specifications/pages/3.0/) is the current form of the venerable JSP and provides the ability to write single-execution pages in the NSF with a shared CDI space. The [Jakarta Standard Tag Library](https://jakarta.ee/specifications/tags/2.0/) is the standard set of tags and functions available for looping, formatting, escaping, and other common operations.
 
 When this library is enabled, .jsp files in the "Files" or "WebContent" parts of the NSF will be interpreted as live pages. For example:
 
@@ -317,6 +369,49 @@ When this library is enabled, .jsp files in the "Files" or "WebContent" parts of
 ```
 
 As demonstrated above, this will resolve in-NSF tags via the NSF's classpath and will allow the use of CDI beans.
+
+## Server Faces 4.0
+
+[Jakarta Server Faces](https://jakarta.ee/specifications/faces/4.0/) is the in-development next form of JSF, the spec XPages forked off from. Version 4.0 of the spec, used here, is in the final stages of development and focuses on removing legacy features and better integrating with other components (such as CDI).
+
+JSF is implemented here by way of [Apache MyFaces](https://myfaces.apache.org/#/core40).
+
+A Faces page, like an XPage, is an XML document that is parsed and converted into components for rendering. For example:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html">
+	
+    <h:head>
+        <title>JSF 4.0 Hello World</title>
+    </h:head>
+    <h:body>
+	    	<h2>JSF 4.0 Hello World Example - hello.xhtml</h2>
+	    	
+	    	<dl>
+	    		<dt>facesContext</dt>
+	    		<dd><h:outputText value="#{facesContext}"/></dd>
+	    		
+	    		<dt>requestGuy.message</dt>
+	    		<dd><h:outputText value="#{requestGuy.message}"/></dd>
+	    		
+	    		<dt>Project Stage</dt>
+	    		<dd><h:outputText value="#{facesContext.application.projectStage}"/></dd>
+	    	</dl>
+    </h:body>
+</f:view>
+```
+
+The "Project Stage" value can be set in the Xsp Properties file to one of the values from `jakarta.faces.application.ProjectStage`. For example:
+
+```
+jakarta.faces.PROJECT_STAGE=Development
+```
+
+This is useful to alter internal behaviors and optimizations. For example, setting Development there will cause the runtime to less-heavily cache page definitions.
 
 ## MVC
 
@@ -592,8 +687,17 @@ The results of these checks will be available at `/xsp/app/health` (aggregating 
 ## Requirements
 
 - Domino FP10+
+	- NoSQL requires Domino 12.0.1+
 - Designer FP10+ (for compiling the NSF)
 - Some of the APIs require setting the project Java compiler level to 1.8
+
+NoSQL and the MicroProfile Rest Client require loosening Domino's java.policy settings to include:
+
+```
+grant {
+	permission java.security.AllPermission;
+};
+```
 
 ## Building
 

@@ -61,21 +61,7 @@ public class NSFJspServlet extends AbstractXspLifecycleServlet {
 	}
 	
 	@Override
-	public void init() throws ServletException {
-		super.init();
-		// Jasper expects a URLClassLoader
-		ClassLoader current = Thread.currentThread().getContextClassLoader();
-		try {
-			Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0], current));
-			delegate.init();
-		} finally {
-			Thread.currentThread().setContextClassLoader(current);
-		}
-	}
-	
-	@Override
-	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
+	protected void doInit(ServletConfig config) throws ServletException {
 		ClassLoader current = Thread.currentThread().getContextClassLoader();
 		try {
 			Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0], current));
@@ -102,8 +88,8 @@ public class NSFJspServlet extends AbstractXspLifecycleServlet {
 					delegate.service(request, response);
 				} finally {
 					Thread.currentThread().setContextClassLoader(current);
-					context.setAttribute("org.glassfish.jsp.beanManagerELResolver", null); //$NON-NLS-1$
-					context.setAttribute(Constants.JSP_TLD_URI_TO_LOCATION_MAP, null);
+					context.removeAttribute("org.glassfish.jsp.beanManagerELResolver"); //$NON-NLS-1$
+					context.removeAttribute(Constants.JSP_TLD_URI_TO_LOCATION_MAP);
 				}
 				return null;
 			});
